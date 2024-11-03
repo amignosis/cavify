@@ -27,16 +27,12 @@ def draw_background(args)
   }
 end
 
-def update_sprites(args)
-  remove_objects(args)
-  Player.update_animation(args)
-  args.outputs.sprites << [args.state.clouds, args.state.player, args.state.fireballs, args.state.flies]
-end
-
-def remove_objects(args)
+def update(args)
   args.state.clouds.reject!(&:should_remove)
   args.state.flies.reject!(&:dead)
   args.state.fireballs.reject!(&:dead)
+  Player.update_animation(args)
+  args.outputs.sprites << [args.state.clouds, args.state.player, args.state.fireballs, args.state.flies]
 end
 
 def title_scene(args)
@@ -52,10 +48,6 @@ def title_scene(args)
     args.state.scene = 'level1'
     return
   end
-  title_scene_highscore_label(args)
-end
-
-def title_scene_highscore_label(args)
   args.outputs.labels << {
     x: 480,
     y: args.grid.h - 220,
@@ -88,7 +80,7 @@ def level1_scene(args)
   Flies.animate_all(args)
   Clouds.spawn_many(args, number_of_clouds_off_screen) if number_of_clouds_off_screen.positive?
   Fireballs.detect_collision(args)
-  update_sprites(args)
+  update(args)
   Score.update(args)
   Timer.update(args)
 end
